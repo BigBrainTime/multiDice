@@ -19,25 +19,13 @@ result = dice.roll("2d20+5")
 Roll with advantage:
 
 ```py
-result = dice.roll("a2d20+5")   #Preferred Method
-```
-
-OR
-
-```py
-result = dice.advantage(dice.roll, "2d20+5")
+result = dice.roll("a2d20+5")
 ```
 
 Roll with disadvantage:
 
 ```py
-result = dice.roll("d2d20+5")   #Preferred Method
-```
-
-OR
-
-```py
-result = dice.disadvantage(dice.roll, "2d20+5")
+result = dice.roll("d2d20+5")
 ```
 
 The dice rolling string supports:
