@@ -116,11 +116,10 @@ def roll(dice: str = "1d6", crit: int = 20) -> int:
 
     Args:
         d (str): Required: '(int)d(int)' Optional parameters:[k(int),('+', '*', '/', '//', '-')(int||roll)]
-        crit (int): only used if object == True, if any roll > than crit self.crit == True
-        object (bool): False returns int, True returns object
+        crit (int): only used if object == True, if any roll > than crit self.crit == Trues
 
     Returns:
-        Object: Final Dice Roll - .value for value of roll for object
+        Int
     """
     return RollDice(dice, crit).value
 

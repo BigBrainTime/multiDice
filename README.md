@@ -4,25 +4,25 @@ multi_dice.py provides functions for rolling dice and calculating results for ta
 
 ## Usage
 
-Import the module:
+To use the multi_dice module, first import it:
 
 ```py
 import multi_dice
 ```
 
-Roll dice:
+To roll dice, call the roll function and pass the dice string:
 
 ```py
 result = multi_dice.roll("2d20+5")
 ```
 
-Roll with advantage:
+To roll with advantage, add an 'a' before the dice string:
 
 ```py
 result = multi_dice.roll("a2d20+5")
 ```
 
-Roll with disadvantage:
+To roll with disadvantage, add a 'd' before the dice string:
 
 ```py
 result = multi_dice.roll("d2d20+5")
@@ -37,18 +37,18 @@ result = multi_dice.roll("d2d20+5")
 * "4d6k3" - Roll 4d6 keep highest 3
 * "2d20l1-5" - Roll 2d20 keep lowest 1 and subtract 5
 
-## Breakdown
+## Dice String Rules
 
-Rules to making dice string
+Here are the rules for constructing a valid dice string:
 
 * "a" or "d" (optional)
 * int
 * "d"
 * int
 * "k" or "l" (optional)
-* int   (requried if k or l)
+  * int   (requried if k or l)
 * opcode (+, -, /, //, *) (optional)
-* int or another dice string    (required if opcode)
+  * int or another dice string    (required if opcode)
 
 OR
 
