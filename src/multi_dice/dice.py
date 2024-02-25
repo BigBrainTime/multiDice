@@ -111,7 +111,7 @@ class RollDice:
             self = roll
 
 
-def roll_dice(dice: str = "1d6", crit: int = 20) -> int:
+def roll(dice: str = "1d6", crit: int = 20) -> int:
     """Rolls dice
 
     Args:
@@ -170,7 +170,7 @@ def disadvantage(func, *args, **kwargs):
 class DiceTestCase(unittest.TestCase):
     def test_raw_number(self):
         for _ in range(1, 101):
-            self.assertEqual(roll_dice(str(_)), _)
+            self.assertEqual(roll(str(_)), _)
 
     def test_k_gt_n(self):
         for _ in range(1, 101):
@@ -180,7 +180,7 @@ class DiceTestCase(unittest.TestCase):
             k_val = number_of_dice + random.randint(1, 101)
 
             self.assertRaises(
-                ValueError, roll_dice, f"{number_of_dice}d{number_of_sides}k{k_val}"
+                ValueError, roll, f"{number_of_dice}d{number_of_sides}k{k_val}"
             )
 
     def test_l_gt_n(self):
@@ -191,7 +191,7 @@ class DiceTestCase(unittest.TestCase):
             l_val = number_of_dice + random.randint(1, 101)
 
             self.assertRaises(
-                ValueError, roll_dice, f"{number_of_dice}d{number_of_sides}l{l_val}"
+                ValueError, roll, f"{number_of_dice}d{number_of_sides}l{l_val}"
             )
 
     def test_standard(self):
@@ -201,7 +201,7 @@ class DiceTestCase(unittest.TestCase):
 
             self.assertTrue(
                 number_of_dice
-                <= roll_dice(f"{number_of_dice}d{number_of_sides}")
+                <= roll(f"{number_of_dice}d{number_of_sides}")
                 <= number_of_dice * number_of_sides
             )
 
@@ -213,7 +213,7 @@ class DiceTestCase(unittest.TestCase):
 
             self.assertTrue(
                 number_of_dice + modifier
-                <= roll_dice(f"{number_of_dice}d{number_of_sides}+{modifier}")
+                <= roll(f"{number_of_dice}d{number_of_sides}+{modifier}")
                 <= (number_of_dice * number_of_sides) + modifier
             )
 
@@ -226,7 +226,7 @@ class DiceTestCase(unittest.TestCase):
 
             self.assertTrue(
                 k_val
-                <= roll_dice(f"{number_of_dice}d{number_of_sides}k{k_val}")
+                <= roll(f"{number_of_dice}d{number_of_sides}k{k_val}")
                 <= (k_val * number_of_sides)
             )
 
@@ -239,7 +239,7 @@ class DiceTestCase(unittest.TestCase):
 
             self.assertTrue(
                 l_val
-                <= roll_dice(f"{number_of_dice}d{number_of_sides}l{l_val}")
+                <= roll(f"{number_of_dice}d{number_of_sides}l{l_val}")
                 <= (l_val * number_of_sides)
             )
 
@@ -253,7 +253,7 @@ class DiceTestCase(unittest.TestCase):
 
             self.assertTrue(
                 k_val + modifier
-                <= roll_dice(f"{number_of_dice}d{number_of_sides}k{k_val}+{modifier}")
+                <= roll(f"{number_of_dice}d{number_of_sides}k{k_val}+{modifier}")
                 <= (k_val * number_of_sides) + modifier
             )
 
@@ -267,7 +267,7 @@ class DiceTestCase(unittest.TestCase):
 
             self.assertTrue(
                 l_val + modifier
-                <= roll_dice(f"{number_of_dice}d{number_of_sides}l{l_val}+{modifier}")
+                <= roll(f"{number_of_dice}d{number_of_sides}l{l_val}+{modifier}")
                 <= (l_val * number_of_sides) + modifier
             )
 
