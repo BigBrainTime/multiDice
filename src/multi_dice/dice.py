@@ -125,15 +125,11 @@ def roll(dice: str = "1d6", crit: int = 20) -> int:
 
 
 def greater_than(a, b):
-    if a > b:
-        return a
-    return b
+    return a if a > b else b
 
 
 def less_than(a, b):
-    if a < b:
-        return a
-    return b
+    return a if a < b else b
 
 
 def advantage(func, *args, **kwargs):
@@ -146,9 +142,7 @@ def advantage(func, *args, **kwargs):
     Returns:
         (int): Highest int value
     """
-    result1 = func(*args, **kwargs)
-    result2 = func(*args, **kwargs)
-    return greater_than(result1, result2)
+    return greater_than(func(*args, **kwargs), func(*args, **kwargs))
 
 
 def disadvantage(func, *args, **kwargs):
@@ -161,9 +155,7 @@ def disadvantage(func, *args, **kwargs):
     Returns:
         (int): lowest int value
     """
-    result1 = func(*args, **kwargs)
-    result2 = func(*args, **kwargs)
-    return less_than(result1, result2)
+    return less_than(func(*args, **kwargs), func(*args, **kwargs))
 
 
 class DiceTestCase(unittest.TestCase):
