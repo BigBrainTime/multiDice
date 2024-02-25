@@ -13,19 +13,19 @@ import multi_dice
 Roll dice:
 
 ```py
-result = dice.roll("2d20+5")
+result = multi_doce.roll("2d20+5")
 ```
 
 Roll with advantage:
 
 ```py
-result = dice.roll("a2d20+5")
+result = multi_doce.roll("a2d20+5")
 ```
 
 Roll with disadvantage:
 
 ```py
-result = dice.roll("d2d20+5")
+result = multi_doce.roll("d2d20+5")
 ```
 
 The dice rolling string supports:
@@ -124,16 +124,16 @@ Class for rolling dice and calculating results. Handles parsing dice strings, ro
 Regular usage
 
 ```py
-dice = RollDice("3d6")
+dice = multi_dice.RollDice("3d6")
 print(dice.value)
 ```
 
 Roll with dis/advantage:
 
 ```py
-dice = RollDice("a2d20")
+dice = multi_dice.RollDice("a2d20")
 print(dice.value)
 
-dice2 = RollDice("d2d20")
+dice2 = multi_dice.RollDice("d2d20")
 print(dice2.value)
 ```
