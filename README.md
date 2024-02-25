@@ -36,6 +36,7 @@ result = multi_dice.roll("d2d20+5")
 * "2d20+5" - Roll 2d20 and add 5
 * "4d6k3" - Roll 4d6 keep highest 3
 * "2d20l1-5" - Roll 2d20 keep lowest 1 and subtract 5
+* "2d8+1d6" - Roll 1d6 and add it to a roll of 2d8
 
 ## Dice String Rules
 

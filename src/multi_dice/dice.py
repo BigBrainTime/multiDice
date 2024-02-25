@@ -6,6 +6,7 @@ import operator
 # Class to roll dice and calculate results
 class RollDice:
     def __init__(self, dice: str = "1d6", crit: int = 20):
+        dice = dice.replace(" ","")
         self.dice = dice
         self.crit_val = crit
 
