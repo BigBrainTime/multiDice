@@ -13,27 +13,20 @@ import multi_dice
 Roll dice:
 
 ```py
-result = multi_doce.roll("2d20+5")
+result = multi_dice.roll("2d20+5")
 ```
 
 Roll with advantage:
 
 ```py
-result = multi_doce.roll("a2d20+5")
+result = multi_dice.roll("a2d20+5")
 ```
 
 Roll with disadvantage:
 
 ```py
-result = multi_doce.roll("d2d20+5")
+result = multi_dice.roll("d2d20+5")
 ```
-
-The dice rolling string supports:
-
-* (int)d(int) - Number of dice and sides
-* k(int) - Keep highest X rolls
-* l(int) - Keep lowest X rolls
-* (+, -, *, /) - Modifiers
 
 ## Examples
 
@@ -60,6 +53,17 @@ Rules to making dice string
 OR
 
 * int
+
+___
+
+"a" = advantage\
+"d" = disadvantage\
+"k" = keep highest int rolls\
+"l" = keep lowest int rolls
+
+## Limits
+
+The only checks on whether a roll is performed is if either the number of rolls or if the sides of the dice are over 1000, and if k and l are <= to the number of sides.
 
 ## Functions
 
