@@ -111,17 +111,16 @@ class RollDice:
             self = roll
 
 
-def roll(dice: str = "1d6", crit: int = 20) -> int:
+def roll(dice: str = "1d6") -> int:
     """Rolls dice
 
     Args:
         d (str): Required: '(int)d(int)' Optional parameters:[k(int),('+', '*', '/', '//', '-')(int||roll)]
-        crit (int): only used if object == True, if any roll > than crit self.crit == Trues
 
     Returns:
         Int
     """
-    return RollDice(dice, crit).value
+    return RollDice(dice).value
 
 
 def greater_than(a, b):

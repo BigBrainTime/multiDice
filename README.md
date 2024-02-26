@@ -71,12 +71,11 @@ The only checks on whether a roll is performed is if either the number of rolls 
 
 ## Functions
 
-### roll(dice, crit=20)
+### roll(dice)
 
 Rolls dice according to the provided dice string and returns the result.
 
 * dice (str): The dice rolling string
-* crit (int): The value that causes a critical (default 20)
 * Returns: (int) Result of the dice roll
 
 ### advantage(*func,*args, *kwargs)
