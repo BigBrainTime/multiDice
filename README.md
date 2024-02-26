@@ -42,12 +42,12 @@ result = multi_dice.roll("d2d20+5")
 
 Here are the rules for constructing a valid dice string:
 
-* "a" or "d" (optional)
+* "a" xor "d" (optional)
 * int
 * "d"
 * int
-* "k" or "l" (optional)
-  * int   (requried if k or l)
+* "k" xor "l" (optional)
+  * int   (requried if k xor l)
 * opcode (+, -, /, //, *) (optional)
   * int or another dice string    (required if opcode)
 
