@@ -93,11 +93,10 @@ class RollDice:
             self.rolls.append(roll)
 
         # Calculate results
-        self.value = self.codes[op](
-            sum(sorted(self.rolls, reverse=reverse_sort)[:k_value]), mod.value)
-        self.average = ((number_of_dice * dice_sides + 1)/ 2) + mod.average
-        self.lowrange = number_of_dice + mod.lowrange
-        self.highrange = (number_of_dice * dice_sides) + mod.highrange
+        self.value = self.codes[op](sum(sorted(self.rolls, reverse=reverse_sort)[:k_value]), mod.value)
+        self.average = self.codes[op](((number_of_dice * dice_sides + 1) / 2), mod.average)
+        self.lowrange = self.codes[op](number_of_dice, mod.lowrange)
+        self.highrange = self.codes[op]((number_of_dice * dice_sides), mod.highrange)
 
     # Reroll with advantage
     def advantage(self):
@@ -498,5 +497,6 @@ class DiceTestCase(unittest.TestCase):
             )
 
 if __name__ == "__main__":
+    print(RollDice("1d20*1d20").value)
     print(RollDice("1d20+1d20").average)
     unittest.main()

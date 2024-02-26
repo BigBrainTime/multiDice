@@ -60,7 +60,10 @@ ___
 "a" = advantage\
 "d" = disadvantage\
 "k" = keep highest int rolls\
-"l" = keep lowest int rolls
+"l" = keep lowest int rolls\
+\
+Note:\
+When using multiple opcodes to do multiple dice, PEMDAS is not followed. Instead the right most value is calculated first and works leftward.
 
 ## Limits
 
