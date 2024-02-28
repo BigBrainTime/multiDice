@@ -8,6 +8,7 @@ class ValidateExpression(ast.NodeVisitor):
         ast.Mult,
         ast.FloorDiv,
         ast.Div,
+        ast.Pow,
         ast.BinOp,
         ast.Expression,
         ast.Constant

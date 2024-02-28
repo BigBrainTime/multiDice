@@ -48,7 +48,7 @@ Here are the rules for constructing a valid dice string:
 * int
 * "k" xor "l" (optional)
   * int   (requried if k xor l)
-* opcode (+, -, /, //, *) (optional)
+* opcode (+, -, /, //, *, **) (optional)
   * int or another dice string    (required if opcode)
 
 OR
@@ -119,9 +119,9 @@ Class for rolling dice and calculating results. Handles parsing dice strings, ro
 
 .average: Average possible roll result
 
-.lowrange: Minimum possible roll result
+.minimum: Minimum possible roll result
 
-.highrange: Maximum possible roll result
+.maximum: Maximum possible roll result
 
 .crit: True if a critical hit was rolled
 ```

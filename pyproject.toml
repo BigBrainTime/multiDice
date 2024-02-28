@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "multi_dice"
-version = "0.0.6"
+version = "0.0.7"
 authors = [
   { name="BigBrainTime", email="" },
 ]

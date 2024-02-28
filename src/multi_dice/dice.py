@@ -37,22 +37,27 @@ class RollDice:
 
     # Check dice string for operators
     def check_op(self):
-        self.average = 0
-        self.min = 0
-        self.max = 0
         dicecopy = str(self.dice)
         averagecopy = str(self.dice)
-        parts = re.findall("[^\+\-\*\/(\/\/)]*(?=$|[\+\-\*\/(\/\/)])", self.dice)
+        minimumcopy = str(self.dice)
+        maximumcopy = str(self.dice)
+        parts = re.findall("[^\+\-\*\/]*(?=$|[\+\-\*\/])", self.dice)
         for part in parts:
             if part != '':
                 part_value = self.roll(part)
                 dicecopy = dicecopy.replace(part, str(part_value['value']), 1)
                 averagecopy = averagecopy.replace(part, str(part_value['average']), 1)
+                minimumcopy = minimumcopy.replace(part, str(part_value['minimum']), 1)
+                maximumcopy = maximumcopy.replace(part, str(part_value['maximum']), 1)
 
         validate_expression(dicecopy)
         validate_expression(averagecopy)
-        self.value = eval(dicecopy,{},{})
-        self.average = eval(averagecopy)
+        validate_expression(minimumcopy)
+        validate_expression(maximumcopy)
+        self.value = eval(dicecopy, {}, {})
+        self.average = eval(averagecopy, {}, {})
+        self.minimum = eval(minimumcopy, {}, {})
+        self.maximum = eval(maximumcopy, {}, {})
 
     # Roll dice and calculate results
     def roll(self, dice):
@@ -63,8 +68,8 @@ class RollDice:
             roll_result = {
                 "value": dice,
                 "average": dice,
-                "min": dice,
-                "max": dice,
+                "minimum": dice,
+                "maximum": dice,
             }
             return roll_result
         split_d = dice.split("d")
@@ -105,8 +110,8 @@ class RollDice:
         roll_result = {
             "value":sum(sorted(self.rolls, reverse=reverse_sort)[:k_value]),
             "average":(number_of_dice * dice_sides + 1) / 2,
-            "min":number_of_dice,
-            "max":number_of_dice * dice_sides,
+            "minimum":number_of_dice,
+            "maximum":number_of_dice * dice_sides,
         }
         return roll_result
 
@@ -127,7 +132,7 @@ def roll(dice: str = "1d6") -> int:
     """Rolls dice
 
     Args:
-        d (str): Required: '(int)d(int)' Optional parameters:[k(int),('+', '*', '/', '//', '-')(int||roll)]
+        d (str): Required: '(int)d(int)' Optional parameters:[k(int),('+', '*', '/', '//', '-', '**')(int||roll)]
 
     Returns:
         Int
