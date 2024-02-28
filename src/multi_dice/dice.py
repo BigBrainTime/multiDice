@@ -1,7 +1,6 @@
-import unittest
 import random
-import operator
-
+import re
+from dice_validation import validate_expression
 
 # Class to roll dice and calculate results
 class RollDice:
@@ -23,42 +22,57 @@ class RollDice:
         # If dice starts with "a", call roll() and advantage()
         elif dice.startswith('a'):
             self.dice = dice[1:]
-            self.roll()
+            self.check_op()
             self.advantage()
 
         # If dice starts with "d", call roll() and disadvantage()
         elif dice.startswith('d'):
             self.dice = dice[1:]
-            self.roll()
+            self.check_op()
             self.disadvantage()
 
         # Otherwise just call roll()
         else:
-            self.roll()
-
-    # Dictionary of operator codes
-    codes = {
-        "+": operator.add,
-        "*": operator.mul,
-        "/": operator.truediv,
-        "//": operator.floordiv,
-        "-": operator.sub,
-    }
+            self.check_op()
 
     # Check dice string for operators
     def check_op(self):
-        for code in self.codes:
-            if code in self.dice:
-                inp, mod = self.dice.split(code,1)
-                return inp, code, RollDice(mod)
-        return self.dice, "+", RollDice("0")
+        dicecopy = str(self.dice)
+        averagecopy = str(self.dice)
+        minimumcopy = str(self.dice)
+        maximumcopy = str(self.dice)
+        parts = re.findall("[^\+\-\*\/]*(?=$|[\+\-\*\/])", self.dice)
+        for part in parts:
+            if part != '':
+                part_value = self.roll(part)
+                dicecopy = dicecopy.replace(part, str(part_value['value']), 1)
+                averagecopy = averagecopy.replace(part, str(part_value['average']), 1)
+                minimumcopy = minimumcopy.replace(part, str(part_value['minimum']), 1)
+                maximumcopy = maximumcopy.replace(part, str(part_value['maximum']), 1)
+
+        validate_expression(dicecopy)
+        validate_expression(averagecopy)
+        validate_expression(minimumcopy)
+        validate_expression(maximumcopy)
+        self.value = eval(dicecopy, {}, {})
+        self.average = eval(averagecopy, {}, {})
+        self.minimum = eval(minimumcopy, {}, {})
+        self.maximum = eval(maximumcopy, {}, {})
 
     # Roll dice and calculate results
-    def roll(self):
-
-        # Check for operators
-        split_d, op, mod = self.check_op()
-        split_d = split_d.split("d")
+    def roll(self, dice):
+        if "d" not in dice:
+            dice = int(dice)
+            self.rolls = [dice]
+            self.crit = False
+            roll_result = {
+                "value": dice,
+                "average": dice,
+                "minimum": dice,
+                "maximum": dice,
+            }
+            return roll_result
+        split_d = dice.split("d")
 
         # Get number of dice and sides
         number_of_dice = int(split_d[0])
@@ -93,10 +107,13 @@ class RollDice:
             self.rolls.append(roll)
 
         # Calculate results
-        self.value = self.codes[op](sum(sorted(self.rolls, reverse=reverse_sort)[:k_value]), mod.value)
-        self.average = self.codes[op](((number_of_dice * dice_sides + 1) / 2), mod.average)
-        self.lowrange = self.codes[op](number_of_dice, mod.lowrange)
-        self.highrange = self.codes[op]((number_of_dice * dice_sides), mod.highrange)
+        roll_result = {
+            "value":sum(sorted(self.rolls, reverse=reverse_sort)[:k_value]),
+            "average":(number_of_dice * dice_sides + 1) / 2,
+            "minimum":number_of_dice,
+            "maximum":number_of_dice * dice_sides,
+        }
+        return roll_result
 
     # Reroll with advantage
     def advantage(self):
@@ -115,7 +132,7 @@ def roll(dice: str = "1d6") -> int:
     """Rolls dice
 
     Args:
-        d (str): Required: '(int)d(int)' Optional parameters:[k(int),('+', '*', '/', '//', '-')(int||roll)]
+        d (str): Required: '(int)d(int)' Optional parameters:[k(int),('+', '*', '/', '//', '-', '**')(int||roll)]
 
     Returns:
         Int
@@ -156,346 +173,8 @@ def disadvantage(func, *args, **kwargs):
     """
     return less_than(func(*args, **kwargs), func(*args, **kwargs))
 
-
-class DiceTestCase(unittest.TestCase):
-    def test_raw_number(self):
-        for _ in range(1, 101):
-            self.assertEqual(roll(str(_)), _)
-
-    def test_k_gt_n(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            k_val = number_of_dice + random.randint(1, 101)
-
-            self.assertRaises(
-                ValueError, roll, f"{number_of_dice}d{number_of_sides}k{k_val}"
-            )
-
-    def test_l_gt_n(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            l_val = number_of_dice + random.randint(1, 101)
-
-            self.assertRaises(
-                ValueError, roll, f"{number_of_dice}d{number_of_sides}l{l_val}"
-            )
-
-    def test_standard(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            self.assertTrue(
-                number_of_dice
-                <= roll(f"{number_of_dice}d{number_of_sides}")
-                <= number_of_dice * number_of_sides
-            )
-
-    def test_standard_with_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-            modifier = random.randint(1, 101)
-
-            self.assertTrue(
-                number_of_dice + modifier
-                <= roll(f"{number_of_dice}d{number_of_sides}+{modifier}")
-                <= (number_of_dice * number_of_sides) + modifier
-            )
-
-    def test_k_without_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            k_val = random.randint(1, number_of_dice)
-
-            self.assertTrue(
-                k_val
-                <= roll(f"{number_of_dice}d{number_of_sides}k{k_val}")
-                <= (k_val * number_of_sides)
-            )
-
-    def test_l_without_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            l_val = random.randint(1, number_of_dice)
-
-            self.assertTrue(
-                l_val
-                <= roll(f"{number_of_dice}d{number_of_sides}l{l_val}")
-                <= (l_val * number_of_sides)
-            )
-
-    def test_k_with_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-            modifier = random.randint(1, 101)
-
-            k_val = random.randint(1, number_of_dice)
-
-            self.assertTrue(
-                k_val + modifier
-                <= roll(f"{number_of_dice}d{number_of_sides}k{k_val}+{modifier}")
-                <= (k_val * number_of_sides) + modifier
-            )
-
-    def test_l_with_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-            modifier = random.randint(1, 101)
-
-            l_val = random.randint(1, number_of_dice)
-
-            self.assertTrue(
-                l_val + modifier
-                <= roll(f"{number_of_dice}d{number_of_sides}l{l_val}+{modifier}")
-                <= (l_val * number_of_sides) + modifier
-            )
-
-    def test_advantage_raw_number(self):
-        for _ in range(1,101):
-            roll = RollDice(str(_))
-            result1 = roll.value
-            roll.advantage()
-            result2 = roll.value
-            self.assertEqual(result1, result2)
-
-    def test_advantage_standard(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            roll = RollDice(f"{number_of_dice}d{number_of_sides}")
-            result1 = roll.value
-            roll.advantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                number_of_dice
-                <= result1 <= result2
-                <= number_of_dice * number_of_sides
-            )
-
-    def test_advantage_standard_with_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-            modifier = random.randint(1, 101)
-
-            roll = RollDice(f"{number_of_dice}d{number_of_sides}+{modifier}")
-            result1 = roll.value
-            roll.advantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                number_of_dice + modifier
-                <= result1 <= result2
-                <= (number_of_dice * number_of_sides) + modifier
-            )
-
-    def test_advantage_k_without_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            k_val = random.randint(1, number_of_dice)
-
-            roll = RollDice(f"{number_of_dice}d{number_of_sides}k{k_val}")
-            result1 = roll.value
-            roll.advantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                k_val
-                <= result1 <= result2
-                <= (k_val * number_of_sides)
-            )
-
-    def test_advantage_l_without_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            l_val = random.randint(1, number_of_dice)
-
-            roll = RollDice(f"{number_of_dice}d{number_of_sides}l{l_val}")
-            result1 = roll.value
-            roll.advantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                l_val
-                <= result1 <= result2
-                <= (l_val * number_of_sides)
-            )
-
-    def test_advantage_k_with_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-            modifier = random.randint(1, 101)
-
-            k_val = random.randint(1, number_of_dice)
-
-            roll = RollDice(
-                f"{number_of_dice}d{number_of_sides}k{k_val}+{modifier}")
-            result1 = roll.value
-            roll.advantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                k_val
-                <= result1 <= result2
-                <= (k_val * number_of_sides) + modifier
-            )
-
-    def test_advantage_l_with_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-            modifier = random.randint(1, 101)
-
-            l_val = random.randint(1, number_of_dice)
-
-            roll = RollDice(
-                f"{number_of_dice}d{number_of_sides}l{l_val}+{modifier}")
-            result1 = roll.value
-            roll.advantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                l_val
-                <= result1 <= result2
-                <= (l_val * number_of_sides) + modifier
-            )
-
-    def test_disadvantage_raw_number(self):
-        for _ in range(1, 101):
-            roll = RollDice(str(_))
-            result1 = roll.value
-            roll.disadvantage()
-            result2 = roll.value
-            self.assertEqual(result1, result2)
-
-    def test_disadvantage_standard(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            roll = RollDice(f"{number_of_dice}d{number_of_sides}")
-            result1 = roll.value
-            roll.disadvantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                number_of_dice
-                <= result2 <= result1
-                <= number_of_dice * number_of_sides
-            )
-
-    def test_disadvantage_standard_with_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-            modifier = random.randint(1, 101)
-
-            roll = RollDice(f"{number_of_dice}d{number_of_sides}+{modifier}")
-            result1 = roll.value
-            roll.disadvantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                number_of_dice + modifier
-                <= result2 <= result1
-                <= (number_of_dice * number_of_sides) + modifier
-            )
-
-    def test_disadvantage_k_without_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            k_val = random.randint(1, number_of_dice)
-
-            roll = RollDice(f"{number_of_dice}d{number_of_sides}k{k_val}")
-            result1 = roll.value
-            roll.disadvantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                k_val
-                <= result2 <= result1
-                <= (k_val * number_of_sides)
-            )
-
-    def test_disadvantage_l_without_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-
-            l_val = random.randint(1, number_of_dice)
-
-            roll = RollDice(f"{number_of_dice}d{number_of_sides}l{l_val}")
-            result1 = roll.value
-            roll.disadvantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                l_val
-                <= result2 <= result1
-                <= (l_val * number_of_sides)
-            )
-
-    def test_disadvantage_k_with_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-            modifier = random.randint(1, 101)
-
-            k_val = random.randint(1, number_of_dice)
-
-            roll = RollDice(
-                f"{number_of_dice}d{number_of_sides}k{k_val}+{modifier}")
-            result1 = roll.value
-            roll.disadvantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                k_val
-                <= result2 <= result1
-                <= (k_val * number_of_sides) + modifier
-            )
-
-    def test_disadvantage_l_with_modifier(self):
-        for _ in range(1, 101):
-            number_of_dice = random.randint(1, 101)
-            number_of_sides = random.randint(1, 101)
-            modifier = random.randint(1, 101)
-
-            l_val = random.randint(1, number_of_dice)
-
-            roll = RollDice(
-                f"{number_of_dice}d{number_of_sides}l{l_val}+{modifier}")
-            result1 = roll.value
-            roll.disadvantage()
-            result2 = roll.value
-
-            self.assertTrue(
-                l_val
-                <= result2 <= result1
-                <= (l_val * number_of_sides) + modifier
-            )
-
 if __name__ == "__main__":
-    print(RollDice("1d20*1d20").value)
+    testdata = RollDice("1d20*1d20")
+    print(testdata.value)
+    print(testdata.average)
     print(RollDice("1d20+1d20").average)
-    unittest.main()

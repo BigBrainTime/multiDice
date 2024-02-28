@@ -48,7 +48,7 @@ Here are the rules for constructing a valid dice string:
 * int
 * "k" xor "l" (optional)
   * int   (requried if k xor l)
-* opcode (+, -, /, //, *) (optional)
+* opcode (+, -, /, //, *, **) (optional)
   * int or another dice string    (required if opcode)
 
 OR
@@ -57,13 +57,13 @@ OR
 
 ___
 
-"a" = advantage\
-"d" = disadvantage\
+"a" = advantage - can only be used in the very beginning of the string\
+"d" = disadvantage - can only be used in the very beginning of the string\
 "k" = keep highest int rolls\
 "l" = keep lowest int rolls\
 \
 Note:\
-When using multiple opcodes to do multiple dice, PEMDAS is not followed. Instead the right most value is calculated first and works leftward.
+When using multiple opcodes to do multiple dice, PEMDAS is only followed 0.0.7 onward. Eariler versions do not follow PEMDAS and could bug out in certain cases. Parenthesis are currently not supported.
 
 ## Limits
 
@@ -119,9 +119,9 @@ Class for rolling dice and calculating results. Handles parsing dice strings, ro
 
 .average: Average possible roll result
 
-.lowrange: Minimum possible roll result
+.minimum: Minimum possible roll result
 
-.highrange: Maximum possible roll result
+.maximum: Maximum possible roll result
 
 .crit: True if a critical hit was rolled
 ```
