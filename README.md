@@ -57,13 +57,13 @@ OR
 
 ___
 
-"a" = advantage\
-"d" = disadvantage\
+"a" = advantage - can only be used in the very beginning of the string\
+"d" = disadvantage - can only be used in the very beginning of the string\
 "k" = keep highest int rolls\
 "l" = keep lowest int rolls\
 \
 Note:\
-When using multiple opcodes to do multiple dice, PEMDAS is not followed. Instead the right most value is calculated first and works leftward.
+When using multiple opcodes to do multiple dice, PEMDAS is only followed 0.0.7 onward. Eariler versions do not follow PEMDAS and could bug out in certain cases. Parenthesis are currently not supported.
 
 ## Limits
 
