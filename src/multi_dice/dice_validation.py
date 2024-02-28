@@ -9,10 +9,9 @@ class ValidateExpression(ast.NodeVisitor):
         ast.FloorDiv,
         ast.Div,
         ast.BinOp,
-        ast.Expression
+        ast.Expression,
+        ast.Constant
     )
-
-    allowed_functions = ()
 
     def visit(self, node):
         if not isinstance(node, tuple(self.allowed)):
@@ -23,11 +22,9 @@ class ValidateExpression(ast.NodeVisitor):
                 # might not be ast.Name, e.g.: foo(bar)(spam)
                 raise SyntaxError(f"Invalid function: {node.func}")
             
-        try:
-            if node.func.id not in self.allowed_functions:
-                raise SyntaxError(f"Invalid function: {node.func.id}")
-        except AttributeError:
-            pass
+        if isinstance(node, ast.Constant):
+            if not isinstance(node.value,int) and not isinstance(node.value,float):
+                raise SyntaxError(f'Non Int or Float {type(node.value)}({node.value})')
 
         return super().visit(node)
 
@@ -35,5 +32,3 @@ class ValidateExpression(ast.NodeVisitor):
 def validate_expression(expr_str: str) -> None:
     expr_ast = ast.parse(expr_str, mode="eval")
     ValidateExpression().visit(expr_ast)
-
-validate_expression("1+1")

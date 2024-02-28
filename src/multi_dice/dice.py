@@ -49,12 +49,10 @@ class RollDice:
                 dicecopy = dicecopy.replace(part, str(part_value['value']), 1)
                 averagecopy = averagecopy.replace(part, str(part_value['average']), 1)
 
-        print(dicecopy)
-        validate_expression("1+1")
         validate_expression(dicecopy)
-        #validate_expression(averagecopy)
+        validate_expression(averagecopy)
         self.value = eval(dicecopy,{},{})
-        #self.average = eval(averagecopy)
+        self.average = eval(averagecopy)
 
     # Roll dice and calculate results
     def roll(self, dice):
@@ -171,5 +169,7 @@ def disadvantage(func, *args, **kwargs):
     return less_than(func(*args, **kwargs), func(*args, **kwargs))
 
 if __name__ == "__main__":
-    print(RollDice("1d20*1d20").value)
+    testdata = RollDice("1d20*1d20")
+    print(testdata.value)
+    print(testdata.average)
     print(RollDice("1d20+1d20").average)
