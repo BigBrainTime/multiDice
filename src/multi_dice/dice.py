@@ -42,6 +42,7 @@ class RollDice:
         minimumcopy = str(self.dice)
         maximumcopy = str(self.dice)
         parts = re.findall("[^\+\-\*\/]*(?=$|[\+\-\*\/])", self.dice)
+        self.rolls = []
         for part in parts:
             if part != '':
                 part_value = self.roll(part)
@@ -98,7 +99,6 @@ class RollDice:
             raise ValueError
 
         # Roll dice
-        self.rolls = []
         self.crit = False
 
         for c in range(number_of_dice):
@@ -213,4 +213,5 @@ if __name__ == "__main__":
     testdata = RollDice("1d20*1d20")
     print(testdata.value)
     print(testdata.average)
+    print(testdata.rolls)
     print(RollDice("1d20+1d20").average)
