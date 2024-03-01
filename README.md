@@ -42,13 +42,14 @@ result = multi_dice.roll("d2d20+5")
 
 Here are the rules for constructing a valid dice string:
 
-* "a" xor "d" (optional)
+* "a" xor "d" (optional on beginning of string)
+* "A" xor "D" (optional on beginning of roll)
 * int
 * "d"
 * int
 * "k" xor "l" (optional)
   * int   (requried if k xor l)
-* opcode (+, -, /, //, *, **) (optional)
+* opcode (+, -, /, //, *, (**, ^, raise)) (optional)
   * int or another dice string    (required if opcode)
 
 OR
@@ -57,13 +58,15 @@ OR
 
 ___
 
-"a" = advantage - can only be used in the very beginning of the string\
-"d" = disadvantage - can only be used in the very beginning of the string\
+"a" = overall advantage - can only be used in the very beginning of the string\
+"d" = overall disadvantage - can only be used in the very beginning of the string\
+"A" = per roll advantage - can be used on any roll within the string\
+"D" = per roll disadvantage - can be used on any roll within the string\
 "k" = keep highest int rolls\
 "l" = keep lowest int rolls\
 \
 Note:\
-When using multiple opcodes to do multiple dice, PEMDAS is only followed 0.0.7 onward. Eariler versions do not follow PEMDAS and could bug out in certain cases. Parenthesis are currently not supported.
+When using multiple opcodes to do multiple dice, PEMDAS is only followed 0.0.7 onward. Eariler versions do not follow PEMDAS and could bug out in certain cases. Parenthesis are currently supported so you can get fancy with something like (1d12+1d6)**3 which does crash other dice rollers.
 
 ## Limits
 

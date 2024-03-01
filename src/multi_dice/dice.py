@@ -4,23 +4,13 @@ import re
 
 # Class to roll dice and calculate results
 class RollDice:
-    def __init__(self, dice: str = "1d6", crit: int = 20):
-        dice = dice.replace(" ","")
+    def __init__(self, dice: str = "1d6", crit: int = 20) -> None:
+        dice = dice.replace(" ","").replace("^","**")
         self.dice = dice
         self.crit_val = crit
 
-        # If no "d" in dice string, set as integer
-        if "d" not in dice:
-            dice = int(dice)
-            self.rolls = [dice]
-            self.crit = False
-            self.value = dice
-            self.average = dice
-            self.lowrange = dice
-            self.highrange = dice
-
         # If dice starts with "a", call roll() and advantage()
-        elif dice.startswith('a'):
+        if dice.startswith('a'):
             self.dice = dice[1:]
             self.check_op()
             self.advantage()
@@ -41,7 +31,8 @@ class RollDice:
         averagecopy = str(self.dice)
         minimumcopy = str(self.dice)
         maximumcopy = str(self.dice)
-        parts = re.findall("[^\+\-\*\/]*(?=$|[\+\-\*\/])", self.dice)
+        parts = re.findall("[^+*/()-]+", self.dice)
+        self.rolls = []
         for part in parts:
             if part != '':
                 part_value = self.roll(part)
@@ -60,72 +51,103 @@ class RollDice:
         self.maximum = eval(maximumcopy, {}, {})
 
     # Roll dice and calculate results
-    def roll(self, dice):
-        if "d" not in dice:
-            dice = int(dice)
-            self.rolls = [dice]
+    def roll(self, die):
+        if "d" not in die:
+            die = int(die)
+            self.rolls = [die]
             self.crit = False
             roll_result = {
-                "value": dice,
-                "average": dice,
-                "minimum": dice,
-                "maximum": dice,
+                "value": die,
+                "average": die,
+                "minimum": die,
+                "maximum": die,
             }
             return roll_result
-        split_d = dice.split("d")
+        
+        split_d = die.split("d")
 
         # Get number of dice and sides
+        rolladvantage = False
+        rolldisadvantage = False
+        if split_d[0].startswith("A"):
+            rolladvantage = True
+            split_d[0] = split_d[0][1:]
+        elif split_d[0].startswith("D"):
+            rolldisadvantage = True
+            split_d[0] = split_d[0][1:]
+
         number_of_dice = int(split_d[0])
-        dice_sides = split_d[1]
+        die_sides = split_d[1]
 
         # Check for keeping highest/lowest rolls
         k_value = number_of_dice
 
         reverse_sort = False
-        if "k" in dice_sides:
-            dice_sides, k_value = dice_sides.split("k")
+        if "k" in die_sides:
+            die_sides, k_value = die_sides.split("k")
             k_value = int(k_value)
             reverse_sort = True
-        elif "l" in dice_sides:
-            dice_sides, k_value = dice_sides.split("l")
+        elif "l" in die_sides:
+            die_sides, k_value = die_sides.split("l")
             k_value = int(k_value)
-            reverse_sort = False
 
-        dice_sides = int(dice_sides)
+        die_sides = int(die_sides)
 
         # Validate inputs
-        if number_of_dice > 1000 or dice_sides > 1000 or k_value > number_of_dice:
+        if number_of_dice > 1000 or die_sides > 1000 or k_value > number_of_dice:
             raise ValueError
 
         # Roll dice
-        self.rolls = []
         self.crit = False
 
         for c in range(number_of_dice):
-            roll = random.randint(1, dice_sides)
+            roll = random.randint(1, die_sides)
             self.crit = True if roll >= self.crit_val else self.crit
             self.rolls.append(roll)
+        total = sum(sorted(self.rolls, reverse=reverse_sort)[:k_value])
+
+        if rolladvantage or rolldisadvantage:
+            secondrolls = []
+            for c in range(number_of_dice):
+                roll = random.randint(1, die_sides)
+                secondcrit = True if roll >= self.crit_val else self.crit
+                secondrolls.append(roll)
+            secondtotal = sum(sorted(secondrolls, reverse=reverse_sort)[:k_value])
+
+            if rolladvantage and secondtotal > total:
+                total = secondtotal
+                self.rolls = secondrolls
+                self.crit = secondcrit
+
+            elif rolldisadvantage and secondtotal < total:
+                total = secondtotal
+                self.rolls = secondrolls
+                self.crit = secondcrit
 
         # Calculate results
         roll_result = {
-            "value":sum(sorted(self.rolls, reverse=reverse_sort)[:k_value]),
-            "average":(number_of_dice * dice_sides + 1) / 2,
-            "minimum":number_of_dice,
-            "maximum":number_of_dice * dice_sides,
+            "value":total,
+            "average":(k_value * die_sides + 1) / 2,
+            "minimum": k_value,
+            "maximum":number_of_dice * die_sides,
         }
         return roll_result
 
     # Reroll with advantage
     def advantage(self):
         roll = RollDice(self.dice, self.crit_val)
-        if roll.value > self.value:
-            self = roll
+        if roll.value >= self.value:
+            self.value = roll.value
+            self.rolls = roll.rolls
+            self.crit = roll.crit
 
     # Reroll with disadvantage
     def disadvantage(self):
         roll = RollDice(self.dice, self.crit_val)
-        if roll.value < self.value:
-            self = roll
+        if roll.value <= self.value:
+            self.value = roll.value
+            self.rolls = roll.rolls
+            self.crit = roll.crit
 
 
 def roll(dice: str = "1d6") -> int:
@@ -140,14 +162,6 @@ def roll(dice: str = "1d6") -> int:
     return RollDice(dice).value
 
 
-def greater_than(a, b):
-    return a if a > b else b
-
-
-def less_than(a, b):
-    return a if a < b else b
-
-
 def advantage(func, *args, **kwargs):
     """Calls a function twice and returns higher value
 
@@ -158,7 +172,7 @@ def advantage(func, *args, **kwargs):
     Returns:
         (int): Highest int value
     """
-    return greater_than(func(*args, **kwargs), func(*args, **kwargs))
+    return max(func(*args, **kwargs), func(*args, **kwargs))
 
 
 def disadvantage(func, *args, **kwargs):
@@ -171,7 +185,7 @@ def disadvantage(func, *args, **kwargs):
     Returns:
         (int): lowest int value
     """
-    return less_than(func(*args, **kwargs), func(*args, **kwargs))
+    return min(func(*args, **kwargs), func(*args, **kwargs))
 
 
 # Thank you https://gist.github.com/nitori for the expression validation
@@ -209,8 +223,11 @@ def validate_expression(expr_str: str) -> None:
     expr_ast = ast.parse(expr_str, mode="eval")
     ValidateExpression().visit(expr_ast)
 
+
 if __name__ == "__main__":
-    testdata = RollDice("1d20*1d20")
+    testdata = RollDice("aA1d20*1d20")
     print(testdata.value)
     print(testdata.average)
-    print(RollDice("1d20+1d20").average)
+    print(testdata.rolls)
+    print(RollDice("a(A1d12+A1d6)**3").value)
+    print(roll("1+1"))
