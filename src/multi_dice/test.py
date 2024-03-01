@@ -1,11 +1,32 @@
 import unittest
 import dice
 import random
+import operator
 
+codes = {
+    "+":operator.add,
+    "-":operator.sub,
+    "/":operator.truediv,
+    "//":operator.floordiv,
+    "*":operator.mul,
+    "**":operator.pow
+}
 class DiceTestCase(unittest.TestCase):
     def test_raw_number(self):
         for _ in range(1, 101):
             self.assertEqual(dice.roll(str(_)), _)
+
+    def test_raw_number_ops(self):
+        for op in ("+","-","/","//","*","**"):
+            for _ in range(1,101):
+                second_number = random.randint(1,101)
+                self.assertEqual(dice.roll(f"{_}{op}{second_number}"),codes[op](_,second_number))
+
+    def test_raw_number_parenthesis(self):
+        for op in ("+", "-", "/", "//", "*", "**"):
+            for _ in range(1, 101):
+                second_number = random.randint(1, 101)
+                self.assertEqual(dice.roll(f"({_}){op}{second_number}"), codes[op](_, second_number))
 
     def test_k_gt_n(self):
         for _ in range(1, 101):
@@ -342,6 +363,4 @@ class DiceTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    print(dice.RollDice("1d20*1d20").value)
-    print(dice.RollDice("1d20+1d20").average)
     unittest.main()

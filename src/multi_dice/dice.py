@@ -4,23 +4,13 @@ import re
 
 # Class to roll dice and calculate results
 class RollDice:
-    def __init__(self, dice: str = "1d6", crit: int = 20):
+    def __init__(self, dice: str = "1d6", crit: int = 20) -> None:
         dice = dice.replace(" ","")
         self.dice = dice
         self.crit_val = crit
 
-        # If no "d" in dice string, set as integer
-        if "d" not in dice:
-            dice = int(dice)
-            self.rolls = [dice]
-            self.crit = False
-            self.value = dice
-            self.average = dice
-            self.lowrange = dice
-            self.highrange = dice
-
         # If dice starts with "a", call roll() and advantage()
-        elif dice.startswith('a'):
+        if dice.startswith('a'):
             self.dice = dice[1:]
             self.check_op()
             self.advantage()
@@ -41,7 +31,7 @@ class RollDice:
         averagecopy = str(self.dice)
         minimumcopy = str(self.dice)
         maximumcopy = str(self.dice)
-        parts = re.findall("[^\+\-\*\/]*(?=$|[\+\-\*\/])", self.dice)
+        parts = re.findall("[^+*/()-]+", self.dice)
         self.rolls = []
         for part in parts:
             if part != '':
@@ -215,3 +205,4 @@ if __name__ == "__main__":
     print(testdata.average)
     print(testdata.rolls)
     print(RollDice("1d20+1d20").average)
+    print(roll("1+1"))
