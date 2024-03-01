@@ -13,23 +13,23 @@ codes = {
 }
 class DiceTestCase(unittest.TestCase):
     def test_raw_number(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             self.assertEqual(dice.roll(str(_)), _)
 
     def test_raw_number_ops(self):
         for op in codes:
-            for _ in range(1,101):
+            for _ in range(1,1001):
                 second_number = random.randint(1,101)
                 self.assertEqual(dice.roll(f"{_}{op}{second_number}"),codes[op](_,second_number))
 
     def test_raw_number_parenthesis(self):
         for op in codes:
-            for _ in range(1, 101):
+            for _ in range(1, 1001):
                 second_number = random.randint(1, 101)
                 self.assertEqual(dice.roll(f"(({_}){op}({second_number}))"), codes[op](_, second_number))
 
     def test_k_gt_n(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -40,7 +40,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_l_gt_n(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -51,7 +51,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_standard(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -62,7 +62,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_standard_with_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
             modifier = random.randint(1, 101)
@@ -74,7 +74,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_k_without_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -87,7 +87,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_l_without_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -100,7 +100,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_k_with_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
             modifier = random.randint(1, 101)
@@ -114,7 +114,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_l_with_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
             modifier = random.randint(1, 101)
@@ -128,7 +128,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_advantage_raw_number(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             roll = dice.RollDice(str(_))
             result1 = roll.value
             roll.advantage()
@@ -136,7 +136,7 @@ class DiceTestCase(unittest.TestCase):
             self.assertEqual(result1, result2)
 
     def test_advantage_standard(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -152,7 +152,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_advantage_standard_with_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
             modifier = random.randint(1, 101)
@@ -169,7 +169,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_advantage_k_without_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -187,7 +187,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_advantage_l_without_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -205,7 +205,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_advantage_k_with_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
             modifier = random.randint(1, 101)
@@ -225,7 +225,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_advantage_l_with_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
             modifier = random.randint(1, 101)
@@ -245,7 +245,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_disadvantage_raw_number(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             roll = dice.RollDice(str(_))
             result1 = roll.value
             roll.disadvantage()
@@ -253,7 +253,7 @@ class DiceTestCase(unittest.TestCase):
             self.assertEqual(result1, result2)
 
     def test_disadvantage_standard(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -269,7 +269,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_disadvantage_standard_with_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
             modifier = random.randint(1, 101)
@@ -286,7 +286,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_disadvantage_k_without_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -304,7 +304,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_disadvantage_l_without_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
 
@@ -322,7 +322,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_disadvantage_k_with_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
             modifier = random.randint(1, 101)
@@ -342,7 +342,7 @@ class DiceTestCase(unittest.TestCase):
             )
 
     def test_disadvantage_l_with_modifier(self):
-        for _ in range(1, 101):
+        for _ in range(1, 1001):
             number_of_dice = random.randint(1, 101)
             number_of_sides = random.randint(1, 101)
             modifier = random.randint(1, 101)

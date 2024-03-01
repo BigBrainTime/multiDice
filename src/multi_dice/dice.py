@@ -90,7 +90,6 @@ class RollDice:
         elif "l" in die_sides:
             die_sides, k_value = die_sides.split("l")
             k_value = int(k_value)
-            reverse_sort = False
 
         die_sides = int(die_sides)
 
