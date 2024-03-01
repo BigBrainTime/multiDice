@@ -17,16 +17,16 @@ class DiceTestCase(unittest.TestCase):
             self.assertEqual(dice.roll(str(_)), _)
 
     def test_raw_number_ops(self):
-        for op in ("+","-","/","//","*","**"):
+        for op in codes:
             for _ in range(1,101):
                 second_number = random.randint(1,101)
                 self.assertEqual(dice.roll(f"{_}{op}{second_number}"),codes[op](_,second_number))
 
     def test_raw_number_parenthesis(self):
-        for op in ("+", "-", "/", "//", "*", "**"):
+        for op in codes:
             for _ in range(1, 101):
                 second_number = random.randint(1, 101)
-                self.assertEqual(dice.roll(f"({_}){op}{second_number}"), codes[op](_, second_number))
+                self.assertEqual(dice.roll(f"(({_}){op}({second_number}))"), codes[op](_, second_number))
 
     def test_k_gt_n(self):
         for _ in range(1, 101):
