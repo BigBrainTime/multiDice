@@ -62,7 +62,6 @@ class RollDice:
     def roll(self, die):
         if "d" not in die:
             die = int(die)
-            self.rolls.append(die)
             self.crit = False
             roll_result = {
                 "value": die,
