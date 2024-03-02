@@ -127,6 +127,8 @@ Class for rolling dice and calculating results. Handles parsing dice strings, ro
 .maximum: Maximum possible roll result
 
 .crit: True if a critical hit was rolled
+
+.data: dict of all values
 ```
 
 ## Class Examples
