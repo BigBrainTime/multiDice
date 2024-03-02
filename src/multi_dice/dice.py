@@ -5,56 +5,64 @@ import re
 # Class to roll dice and calculate results
 class RollDice:
     def __init__(self, dice: str = "1d6", crit: int = 20) -> None:
-        dice = dice.replace(" ","").replace("^","**")
-        self.dice = dice
-        self.crit_val = crit
+        dice: str = dice.replace(" ","").replace("^","**")
+        self.dice: str = dice
+        self.crit_val:int  = crit
 
         # If dice starts with "a", call roll() and advantage()
         if dice.startswith('a'):
-            self.dice = dice[1:]
-            self.check_op()
+            self.parse_dice()
             self.advantage()
 
         # If dice starts with "d", call roll() and disadvantage()
         elif dice.startswith('d'):
-            self.dice = dice[1:]
-            self.check_op()
+            self.parse_dice()
             self.disadvantage()
 
         # Otherwise just call roll()
         else:
-            self.check_op()
+            self.parse_dice()
 
     # Check dice string for operators
-    def check_op(self):
-        dicecopy = str(self.dice)
-        averagecopy = str(self.dice)
-        minimumcopy = str(self.dice)
-        maximumcopy = str(self.dice)
-        parts = re.findall("[^+*/()-]+", self.dice)
-        self.rolls = []
+    def parse_dice(self):
+        dice: str = str((self.dice.replace('d', '',1) if self.dice.startswith('d') else self.dice).replace('a', ''))
+        dicecopy: str = str(dice)
+        averagecopy: str = str(dice)
+        minimumcopy: str = str(dice)
+        maximumcopy: str = str(dice)
+        parts: list = re.findall("[^+*/()-]+", dice)
+        self.rolls: list = []
         for part in parts:
             if part != '':
-                part_value = self.roll(part)
-                dicecopy = dicecopy.replace(part, str(part_value['value']), 1)
-                averagecopy = averagecopy.replace(part, str(part_value['average']), 1)
-                minimumcopy = minimumcopy.replace(part, str(part_value['minimum']), 1)
-                maximumcopy = maximumcopy.replace(part, str(part_value['maximum']), 1)
+                part_value: dict = self.roll(part)
+                dicecopy: str = dicecopy.replace(part, str(part_value['value']), 1)
+                averagecopy: str = averagecopy.replace(part, str(part_value['average']), 1)
+                minimumcopy: str = minimumcopy.replace(part, str(part_value['minimum']), 1)
+                maximumcopy: str = maximumcopy.replace(part, str(part_value['maximum']), 1)
 
         validate_expression(dicecopy)
         validate_expression(averagecopy)
         validate_expression(minimumcopy)
         validate_expression(maximumcopy)
-        self.value = eval(dicecopy, {}, {})
-        self.average = eval(averagecopy, {}, {})
-        self.minimum = eval(minimumcopy, {}, {})
-        self.maximum = eval(maximumcopy, {}, {})
+        self.value: int = eval(dicecopy, {}, {})
+        self.average: int = eval(averagecopy, {}, {})
+        self.minimum: int = eval(minimumcopy, {}, {})
+        self.maximum: int = eval(maximumcopy, {}, {})
+        self.data: dict = {
+            "die": self.dice,
+            "rolls": self.rolls,
+            "value": self.value,
+            "crit": self.crit,
+            "average": self.average,
+            "minimum": self.minimum,
+            "maximum": self.maximum
+        }
 
     # Roll dice and calculate results
     def roll(self, die):
         if "d" not in die:
             die = int(die)
-            self.rolls = [die]
+            self.rolls.append(die)
             self.crit = False
             roll_result = {
                 "value": die,
@@ -99,12 +107,12 @@ class RollDice:
 
         # Roll dice
         self.crit = False
-
+        rolls = []
         for c in range(number_of_dice):
             roll = random.randint(1, die_sides)
             self.crit = True if roll >= self.crit_val else self.crit
-            self.rolls.append(roll)
-        total = sum(sorted(self.rolls, reverse=reverse_sort)[:k_value])
+            rolls.append(roll)
+        total = sum(sorted(rolls, reverse=reverse_sort)[:k_value])
 
         if rolladvantage or rolldisadvantage:
             secondrolls = []
@@ -116,13 +124,16 @@ class RollDice:
 
             if rolladvantage and secondtotal > total:
                 total = secondtotal
-                self.rolls = secondrolls
+                rolls = secondrolls
                 self.crit = secondcrit
 
             elif rolldisadvantage and secondtotal < total:
                 total = secondtotal
-                self.rolls = secondrolls
+                rolls = secondrolls
                 self.crit = secondcrit
+
+        for value in rolls:
+            self.rolls.append(value)
 
         # Calculate results
         roll_result = {
@@ -135,7 +146,7 @@ class RollDice:
 
     # Reroll with advantage
     def advantage(self):
-        roll = RollDice(self.dice, self.crit_val)
+        roll = RollDice(self.dice.replace('a',''), self.crit_val)
         if roll.value >= self.value:
             self.value = roll.value
             self.rolls = roll.rolls
@@ -143,18 +154,21 @@ class RollDice:
 
     # Reroll with disadvantage
     def disadvantage(self):
-        roll = RollDice(self.dice, self.crit_val)
+        roll = RollDice(self.dice.replace('d','', 1) if self.dice.startswith('d') else self.dice, self.crit_val)
         if roll.value <= self.value:
             self.value = roll.value
             self.rolls = roll.rolls
             self.crit = roll.crit
 
+    def __str__(self):
+        return str(self.data)
+
 
 def roll(dice: str = "1d6") -> int:
-    """Rolls dice
+    """Rolls dice and returns only an int
 
     Args:
-        d (str): Required: '(int)d(int)' Optional parameters:[k(int),('+', '*', '/', '//', '-', '**')(int||roll)]
+        dice (str): Required: '(int)d(int)' Optional parameters:[k(int),('+', '*', '/', '//', '-', '**')(int||roll)]
 
     Returns:
         Int
@@ -162,7 +176,7 @@ def roll(dice: str = "1d6") -> int:
     return RollDice(dice).value
 
 
-def advantage(func, *args, **kwargs):
+def advantage(func, *args, **kwargs) -> int:
     """Calls a function twice and returns higher value
 
     Args:
@@ -175,7 +189,7 @@ def advantage(func, *args, **kwargs):
     return max(func(*args, **kwargs), func(*args, **kwargs))
 
 
-def disadvantage(func, *args, **kwargs):
+def disadvantage(func, *args, **kwargs) -> int:
     """Calls a function twice and returns lower value
 
     Args:
@@ -225,9 +239,6 @@ def validate_expression(expr_str: str) -> None:
 
 
 if __name__ == "__main__":
-    testdata = RollDice("aA1d20*1d20")
-    print(testdata.value)
-    print(testdata.average)
-    print(testdata.rolls)
-    print(RollDice("a(A1d12+A1d6)**3").value)
+    print(RollDice("aA1d20*A1d20"))
+    print(RollDice("a(A1d12+A1d6)**3"))
     print(roll("1+1"))

@@ -66,7 +66,9 @@ ___
 "l" = keep lowest int rolls\
 \
 Note:\
-When using multiple opcodes to do multiple dice, PEMDAS is only followed 0.0.7 onward. Eariler versions do not follow PEMDAS and could bug out in certain cases. Parenthesis are currently supported so you can get fancy with something like (1d12+1d6)**3 which does crash other dice rollers.
+When using multiple opcodes to do multiple dice, PEMDAS is only followed 0.0.7 onward. Eariler versions do not follow PEMDAS and could bug out in certain cases. Parenthesis are currently supported so you can get fancy with something like (1d12+1d6)\*\*3 which does crash other dice rollers.\
+\
+Using /,//, or any dis/advantage will not change the average calculation because it is just inserting the dice average itself into the same math equation. There is no real average formula being used other than per die average which only works on +,-,*,\*\* etc.
 
 ## Limits
 
@@ -127,6 +129,8 @@ Class for rolling dice and calculating results. Handles parsing dice strings, ro
 .maximum: Maximum possible roll result
 
 .crit: True if a critical hit was rolled
+
+.data: dict of all values
 ```
 
 ## Class Examples
