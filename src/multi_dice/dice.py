@@ -107,12 +107,12 @@ class RollDice:
 
         # Roll dice
         self.crit = False
-
+        rolls = []
         for c in range(number_of_dice):
             roll = random.randint(1, die_sides)
             self.crit = True if roll >= self.crit_val else self.crit
-            self.rolls.append(roll)
-        total = sum(sorted(self.rolls, reverse=reverse_sort)[:k_value])
+            rolls.append(roll)
+        total = sum(sorted(rolls, reverse=reverse_sort)[:k_value])
 
         if rolladvantage or rolldisadvantage:
             secondrolls = []
@@ -124,13 +124,16 @@ class RollDice:
 
             if rolladvantage and secondtotal > total:
                 total = secondtotal
-                self.rolls = secondrolls
+                rolls = secondrolls
                 self.crit = secondcrit
 
             elif rolldisadvantage and secondtotal < total:
                 total = secondtotal
-                self.rolls = secondrolls
+                rolls = secondrolls
                 self.crit = secondcrit
+
+        for value in rolls:
+            self.rolls.append(value)
 
         # Calculate results
         roll_result = {
@@ -236,6 +239,6 @@ def validate_expression(expr_str: str) -> None:
 
 
 if __name__ == "__main__":
-    print(RollDice("aA1d20*1d20"))
+    print(RollDice("aA1d20*A1d20"))
     print(RollDice("a(A1d12+A1d6)**3"))
     print(roll("1+1"))
