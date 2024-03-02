@@ -62,7 +62,6 @@ class RollDice:
     def roll(self, die):
         if "d" not in die:
             die = int(die)
-            self.rolls.append(die)
             self.crit = False
             roll_result = {
                 "value": die,
@@ -140,7 +139,7 @@ class RollDice:
             "value":total,
             "average":(k_value * die_sides + 1) / 2,
             "minimum": k_value,
-            "maximum":number_of_dice * die_sides,
+            "maximum": k_value * die_sides,
         }
         return roll_result
 
