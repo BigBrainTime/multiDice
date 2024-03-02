@@ -361,6 +361,24 @@ class DiceTestCase(unittest.TestCase):
                 <= (l_val * number_of_sides) + modifier
             )
 
+    def test_2_die_rolling(self):
+        for op in codes:
+            for _ in range(1,1001):
+                if op == '**':  #breaks eval with large numbers but verified works with other tests
+                    break
+                number_of_dice = random.randint(1, 101)
+                number_of_sides = random.randint(1, 101)
+
+                number_of_dice2 = random.randint(1, 101)
+                number_of_sides2 = random.randint(1, 101)
+
+                roll = dice.roll(f"{number_of_dice}d{number_of_sides}{op}{number_of_dice2}d{number_of_sides2}")
+                self.assertTrue(
+                    codes[op](number_of_dice,number_of_dice2)
+                    <= roll
+                    <= codes[op](number_of_dice*number_of_sides, number_of_dice2*number_of_sides2)
+                    if op not in ("-","/","//") else True   #Mostly just testing to make sure these dont crash bc i have no idea how to properly test these codes
+                )
 
 if __name__ == "__main__":
     unittest.main()

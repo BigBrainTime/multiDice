@@ -11,21 +11,21 @@ class RollDice:
 
         # If dice starts with "a", call roll() and advantage()
         if dice.startswith('a'):
-            self.check_op()
+            self.parse_dice()
             self.advantage()
 
         # If dice starts with "d", call roll() and disadvantage()
         elif dice.startswith('d'):
-            self.check_op()
+            self.parse_dice()
             self.disadvantage()
 
         # Otherwise just call roll()
         else:
-            self.check_op()
+            self.parse_dice()
 
     # Check dice string for operators
-    def check_op(self):
-        dice: str = str((self.dice.replace('d', '') if self.dice.startswith('d') else self.dice).replace('a', ''))
+    def parse_dice(self):
+        dice: str = str((self.dice.replace('d', '',1) if self.dice.startswith('d') else self.dice).replace('a', ''))
         dicecopy: str = str(dice)
         averagecopy: str = str(dice)
         minimumcopy: str = str(dice)
@@ -151,7 +151,7 @@ class RollDice:
 
     # Reroll with disadvantage
     def disadvantage(self):
-        roll = RollDice(self.dice.replace('d','') if self.dice.startswith('d') else self.dice, self.crit_val)
+        roll = RollDice(self.dice.replace('d','', 1) if self.dice.startswith('d') else self.dice, self.crit_val)
         if roll.value <= self.value:
             self.value = roll.value
             self.rolls = roll.rolls
