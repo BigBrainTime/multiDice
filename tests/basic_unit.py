@@ -1,5 +1,5 @@
 import unittest
-import dice
+import multi_dice as dice
 import random
 import operator
 
